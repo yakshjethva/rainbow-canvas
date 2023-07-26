@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rainbow Canvas</title>
+  <style>
+    canvas {
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="800" height="400"></canvas>
+  <button id="clearBtn">Clear</button>
+  <input type="range" id="brushSize" min="1" max="10" step="1" value="5">
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const clearBtn = document.getElementById("clearBtn");
+    const brushSizeInput = document.getElementById("brushSize");
+
+    let isDrawing = false;
+    let hue = 0;
+
+    canvas.addEventListener("mousedown", startDrawing);
+    canvas.addEventListener("mouseup", stopDrawing);
+    canvas.addEventListener("mousemove", draw);
+
+    function startDrawing(e) {
+      isDrawing = true;
+      ctx.beginPath();
+      ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+    }
+
+    function stopDrawing() {
+      isDrawing = false;
+    }
+
+    function draw(e) {
+      if (!isDrawing) return;
+      ctx.lineWidth = brushSizeInput.value;
+      ctx.lineCap = "round";
+
+      ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+      ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+      ctx.stroke();
+
+      hue = (hue + 1) % 360;
+    }
+
+    clearBtn.addEventListener("click", clearCanvas);
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  </script>
+</body>
+</html>
